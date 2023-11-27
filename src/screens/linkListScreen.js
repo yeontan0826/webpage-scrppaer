@@ -3,6 +3,7 @@ import { Alert, SectionList, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import styled from 'styled-components/native';
 
 import { Header } from '../components/header/header';
 import { Button } from '../components/button';
@@ -78,26 +79,19 @@ export const LinkListScreen = () => {
 
   const renderSectionHeader = ({ section }) => {
     return (
-      <View
-        style={{
-          paddingHorizontal: 12,
-          paddingVertical: 4,
-          backgroundColor: 'white',
-        }}
-      >
+      <SectionHeaderContainer>
         <Typography color="gray" fontSize={12}>
           {section.title}
         </Typography>
-      </View>
+      </SectionHeaderContainer>
     );
   };
 
   const renderItem = ({ item }) => {
     return (
-      <Button
+      <ItemWrapper
         onPress={() => onPressListItem(item)}
         onLongPress={() => onLongPressListItem(item)}
-        style={{ paddingHorizontal: 24, paddingVertical: 12 }}
       >
         <View>
           <Typography fontSize={20}>{item.link}</Typography>
@@ -107,7 +101,7 @@ export const LinkListScreen = () => {
             {new Date(item.createdAt).toLocaleString()}
           </Typography>
         </View>
-      </Button>
+      </ItemWrapper>
     );
   };
 
@@ -125,30 +119,38 @@ export const LinkListScreen = () => {
         renderSectionHeader={renderSectionHeader}
         renderItem={renderItem}
       />
-
       {/* 플로팅 버튼 */}
-      <View
-        style={{
-          position: 'absolute',
-          right: 24,
-          bottom: 24 + safeAreaInset.bottom,
-        }}
-      >
+      <FloatingButtonContainer safeAreaInset={safeAreaInset}>
         <Button onPress={onPressAddButton}>
-          <View
-            style={{
-              width: 52,
-              height: 52,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 26,
-              backgroundColor: 'black',
-            }}
-          >
+          <FloatingButtonWrapper>
             <Icon name="add" color="white" size={32} />
-          </View>
+          </FloatingButtonWrapper>
         </Button>
-      </View>
+      </FloatingButtonContainer>
     </View>
   );
 };
+
+const SectionHeaderContainer = styled.View`
+  padding: 4px 12px;
+  background-color: white;
+`;
+
+const ItemWrapper = styled(Button)`
+  padding: 12px 24px;
+`;
+
+const FloatingButtonContainer = styled.View`
+  position: absolute;
+  right: 24px;
+  bottom: ${(props) => 24 + props.safeAreaInset.bottom};
+`;
+
+const FloatingButtonWrapper = styled.View`
+  width: 52px;
+  height: 52px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 26px;
+  background-color: black;
+`;

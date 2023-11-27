@@ -3,6 +3,7 @@ import { ActivityIndicator, View, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSetRecoilState } from 'recoil';
+import styled from 'styled-components/native';
 
 import { Header } from '../components/header/header';
 import { SingleLineInput } from '../components/singleLineInput';
@@ -91,14 +92,7 @@ export const AddLinkScreen = () => {
         </Header.Group>
         <Header.Icon name="close" onPress={onPressClose} />
       </Header>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'flex-start',
-          paddingTop: 32,
-          paddingHorizontal: 24,
-        }}
-      >
+      <Container>
         <View>
           <SingleLineInput
             value={url}
@@ -106,17 +100,7 @@ export const AddLinkScreen = () => {
             placeholder="https://example.com"
             onSubmitEditing={onSubmitEditing}
           />
-          <View
-            style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              right: 0,
-              borderWidth: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <CloseButtonWrapper>
             <Button
               onPress={() => {
                 setUrl('');
@@ -125,40 +109,29 @@ export const AddLinkScreen = () => {
             >
               <Icon name="close" color="black" size={20} />
             </Button>
-          </View>
+          </CloseButtonWrapper>
         </View>
         {loading ? (
           <>
             <Spacer space={20} />
             <View>
               <Spacer space={(width - 48) * 0.5} />
-              <View
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  justifyContent: 'center',
-                }}
-              >
+              <IndicatorWrapper>
                 <ActivityIndicator />
-              </View>
+              </IndicatorWrapper>
             </View>
           </>
         ) : (
           metaData !== null && (
             <>
               <Spacer space={20} />
-              <View
-                style={{ borderWidth: 1, borderRadius: 4, borderColor: 'gray' }}
-              >
+              <MetaDataWrapper>
                 <RemoteImage
                   url={metaData.image}
                   width={width - 48}
                   height={(width - 48) * 0.5}
                 />
-                <View style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
+                <MetaDataContainer>
                   <Spacer space={10} />
                   <Typography fontSize={20} color="black">
                     {metaData.title}
@@ -167,32 +140,70 @@ export const AddLinkScreen = () => {
                   <Typography fontSize={16} color="gray">
                     {metaData.description}
                   </Typography>
-                </View>
-              </View>
+                </MetaDataContainer>
+              </MetaDataWrapper>
             </>
           )
         )}
-      </View>
+      </Container>
       <Button onPress={onPressSave}>
-        <View
-          style={{
-            backgroundColor: url === '' || metaData === null ? 'gray' : 'black',
-          }}
-        >
-          <View
-            style={{
-              height: 52,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+        <ButtonBackground url={url} metaData={metaData}>
+          <SaveButtonWrapper>
             <Typography color="white" fontSize={18}>
               저장하기
             </Typography>
-          </View>
+          </SaveButtonWrapper>
           <Spacer space={safeAreaInset.bottom} />
-        </View>
+        </ButtonBackground>
       </Button>
     </View>
   );
 };
+
+const Container = styled.View`
+  flex: 1;
+  justify-content: center;
+  padding-top: 32px;
+  padding-left: 24px;
+  padding-right: 24px;
+`;
+
+const CloseButtonWrapper = styled.View`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+  border-width: 1px;
+`;
+
+const IndicatorWrapper = styled.View`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+`;
+
+const MetaDataWrapper = styled.View`
+  border-width: 1px;
+  border-radius: 4px;
+  border-color: gray;
+`;
+
+const MetaDataContainer = styled.View`
+  padding: 8px 12px;
+`;
+
+const ButtonBackground = styled.View`
+  background-color: ${(props) =>
+    props.url === '' || props.metaData === null ? 'gray' : 'black'};
+`;
+
+const SaveButtonWrapper = styled.View`
+  height: 52px;
+  justify-content: center;
+  align-items: center;
+`;
